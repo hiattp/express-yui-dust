@@ -1,2 +1,83 @@
-<h1><%= title %></h1>
-<p>Welcome to <%= title %></p>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <script src="http://yui.yahooapis.com/3.5.0/build/yui/yui-min.js"></script>
+    <script type="text/javascript" src="http://platform.linkedin.com/in.js">
+      api_key: l3zt20x66ny5
+    </script>
+  </head>
+  <body>
+    <p>None YUI/Handlebars rendered button:</p>
+    <script type="in/Login">
+    Hello, <?js= firstName ?> <?js= lastName ?>.
+    </script>
+    <div id="test-app"></div>
+  </body>
+</html>
+
+<script id="t-home" type="text/x-handlebars-template">
+    <h1>Test App for Express-YUI App Framework-Linkedin JS API</h1>
+    <p>YUI/Handlebars rendered button:</p>
+    <p>(not present)</p>
+    <script type="in/Login">
+    Hello, <?js= firstName ?> <?js= lastName ?>.
+    </script>
+</script>
+
+<script>
+
+YUI().use('app', 'handlebars', function (Y) {
+
+var HomePageView, TestApp;
+
+HomePageView = Y.Base.create('homePageView', Y.View, [], {
+  template: Y.Handlebars.compile(Y.one("#t-home").getContent()),
+	render: function(){
+		var content = this.template();
+		this.get('container').setContent(content);
+		return this;
+	}
+});
+
+TestApp = Y.Base.create('testApp', Y.App, [], {
+	views: {
+		homePage: {
+			type: HomePageView
+		}
+	},
+	
+	initializer: function(){
+		this.once('ready', function(e){
+			if (this.hasRoute(this.getPath())){
+				this.dispatch();
+			} else {
+				this.showHomePage();
+			}
+		});
+	},
+	
+	showHomePage: function(req){
+		this.showView('homePage', {});
+	}
+	
+}, {
+	
+	ATTRS: {
+		routes: {
+			value: [
+				{path: '/',	callback: 'showHomePage'}
+			]
+		}
+	}
+});
+
+new TestApp({
+	serverRouting: true,
+	container: '#test-app',
+	transitions: true
+}).render();
+
+});
+
+</script>
